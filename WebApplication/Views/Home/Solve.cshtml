@@ -1,0 +1,162 @@
+﻿@model WebApplication.Models.Solver.SolutionModel
+
+@{
+    ViewData["Title"] = "Privacy Policy";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        #map {
+            width: 100%;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row shortened">
+            <p class="highlighted-text">Результат</p>
+            <hr class="spaced-hr">
+        </div>
+        <div id="map" class="mb-4"></div>
+        <div class="form-section" style="font-weight: bold">
+            <p>Сумарний пріоритет: @Model.Solution.GetTotalWeight()</p>
+            <p>Час виконання місії: @Model.Solution.GetTotalTime()</p>
+            <p>Довжина маршруту польоту: @Model.Solution.GetTotalDistance(Model.Problem.SpeedInKmPerHour)</p>
+            <p>Підмаршрути:</p>
+            <ul>
+                @foreach (var subPathInfo in Model.Solution.GetSubPathsInfo())
+                {
+                    <li>@subPathInfo</li>
+                }
+            </ul>
+        </div>
+        <button type="submit" class="btn btn-primary mt-4 w-100" onclick="location.href='@Url.Action("SaveToFile", "Home")'">Завантажити файл з результатами</button>
+    </div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCr8tzD-4GNYIAI5fvFy34dh7M8nuRjw-8&callback=initMap" async defer></script>
+    <script>
+        window.initMap = function () {
+            var mapStyle = [
+                {
+                    "featureType": "poi",
+                    "elementType": "labels",
+                    "stylers": [{ "visibility": "off" }]
+                },
+                {
+                    "featureType": "transit",
+                    "elementType": "labels.icon",
+                    "stylers": [{ "visibility": "off" }]
+                }
+            ];
+
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 50.4501, lng: 30.5234 },
+                zoom: 13,
+                styles: mapStyle
+            });
+
+            // Retrieve base markers data
+            var baseMarkersData = @Html.Raw(ViewData["BaseMarkers"]);
+            console.log("Base markers data:");
+            console.log(baseMarkersData);
+
+            // Retrieve object markers data
+            var objectMarkersData = @Html.Raw(ViewData["ObjectMarkers"]);
+            console.log("Object markers data:");
+            console.log(objectMarkersData);
+
+            // Retrieve connections data
+            var connectionsData = @Html.Raw(ViewData["Connections"]);
+            console.log("Connections data:");
+            console.log(connectionsData);
+
+            // Create a bounds object
+            var bounds = new google.maps.LatLngBounds();
+
+            // Add base markers to the map
+            var baseMarkers = [];
+            baseMarkersData.forEach(function (markerData) {
+                var baseLatLng = new google.maps.LatLng(markerData.Latitude, markerData.Longitude);
+                var baseMarker = new google.maps.Marker({
+                    position: baseLatLng,
+                    map: map,
+                    label: markerData.Label,
+                    icon: {
+                        url: "https://maps.google.com/mapfiles/ms/icons/green-dot.png",
+                        scaledSize: new google.maps.Size(40, 40)
+                    }
+                });
+                baseMarkers.push(baseMarker);
+                bounds.extend(baseLatLng);
+            });
+
+            // Add object markers to the map
+            var objectMarkers = [];
+            objectMarkersData.forEach(function (markerData) {
+                var objectLatLng = new google.maps.LatLng(markerData.Latitude, markerData.Longitude);
+                var objectMarker = new google.maps.Marker({
+                    position: objectLatLng,
+                    map: map,
+                    label: markerData.Label,
+                    icon: {
+                        url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                        scaledSize: new google.maps.Size(40, 40)
+                    }
+                });
+                objectMarkers.push(objectMarker);
+                bounds.extend(objectLatLng);
+            });
+
+            // Draw lines between connections
+            connectionsData.forEach(function (connection) {
+                var startMarker, endMarker;
+
+                if (connection.StartType === "Base") {
+                    startMarker = baseMarkers[connection.StartIndex];
+                } else if (connection.StartType === "Object") {
+                    startMarker = objectMarkers[connection.StartIndex];
+                }
+
+                if (connection.EndType === "Base") {
+                    endMarker = baseMarkers[connection.EndIndex];
+                } else if (connection.EndType === "Object") {
+                    endMarker = objectMarkers[connection.EndIndex];
+                }
+
+                if (startMarker && endMarker) {
+                    var pathCoordinates = [
+                        { lat: startMarker.getPosition().lat(), lng: startMarker.getPosition().lng() },
+                        { lat: endMarker.getPosition().lat(), lng: endMarker.getPosition().lng() }
+                    ];
+
+                    var line = new google.maps.Polyline({
+                        path: pathCoordinates,
+                        geodesic: true,
+                        strokeColor: connection.Color,
+                        strokeOpacity: 1.0,
+                        strokeWeight: 2
+                    });
+
+                    line.setMap(map);
+                }
+            });
+
+            // Adjust the map's viewport to fit the bounds of the markers
+            map.fitBounds(bounds);
+
+            // Add listener for bounds_changed event
+            google.maps.event.addListenerOnce(map, 'bounds_changed', function () {
+                if (map.getZoom() > 15) {
+                    map.setZoom(15); // Adjust this zoom level as desired
+                } else {
+                    map.setZoom(map.getZoom() - 1); // Zoom out a little
+                }
+            });
+        };
+    </script>
+</body>
+</html>

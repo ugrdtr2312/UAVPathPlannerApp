@@ -1,0 +1,231 @@
+﻿@{
+    ViewData["Title"] = "Маршрутизатор";
+}
+
+<style>
+    .container {
+        width: 70%;
+        margin: 0 auto;
+    }
+</style>
+
+<div class="container">
+    <form method="post" enctype="multipart/form-data" action="/Home/Solve">
+        <div class="shortened">
+            <p class="highlighted-text">Об'єкти розвідки</p>
+            <hr class="spaced-hr">
+        </div>
+        <div id="points-container">
+            <div class="form-section">
+                <div class="form-group">
+                    <label style="margin-top: 15px;">Ціль 1</label>
+                </div>
+                <div class="form-group">
+                    <input type="hidden" id="Points_0_Id" name="Points[0].Id" value="1">
+                    <label for="Points_0_X">X:</label>
+                    <input type="text" id="Points_0_X" name="Points[0].X" class="form-control">
+                    <label for="Points_0_Y">Y:</label>
+                    <input type="text" id="Points_0_Y" name="Points[0].Y" class="form-control">
+                    <label for="Points_0_Weight">Пріоритет:</label>
+                    <input type="text" id="Points_0_Weight" name="Points[0].Weight" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="form-section">
+            <button type="button" id="add-point-btn" class="btn btn-primary">Додати ціль</button>
+        </div><br>
+
+        <div class="row shortened">
+            <p class="highlighted-text">Місця дислокації ПЦО </p>
+            <hr class="spaced-hr">
+        </div>
+        <div id="bases-container">
+            <div class="form-section">
+                <div class="form-group">
+                    <label style="margin-top: 15px;">База 1</label>
+                </div>
+                <div class="form-group">
+                    <input type="hidden" id="Bases_0_Id" name="Bases[0].Id" value="1">
+                    <label for="Bases_0_X">X:</label>
+                    <input type="text" id="Bases_0_X" name="Bases[0].X" class="form-control">
+                    <label for="Bases_0_Y">Y:</label>
+                    <input type="text" id="Bases_0_Y" name="Bases[0].Y" class="form-control">
+                </div>
+            </div>
+            <div class="form-section">
+                <div class="form-group">
+                    <label>База 2</label>
+                </div>
+                <div class="form-group">
+                    <input type="hidden" id="Bases_1_Id" name="Bases[1].Id" value="2">
+                    <label for="Bases_1_X">X:</label>
+                    <input type="text" id="Bases_1_X" name="Bases[1].X" class="form-control">
+                    <label for="Bases_1_Y">Y:</label>
+                    <input type="text" id="Bases_1_Y" name="Bases[1].Y" class="form-control">
+                </div>
+            </div>
+            <div class="form-section">
+                <div class="form-group">
+                    <label>База 3</label>
+                </div>
+                <div class="form-group">
+                    <input type="hidden" id="Bases_2_Id" name="Bases[2].Id" value="1">
+                    <label for="Bases_2_X">X:</label>
+                    <input type="text" id="Bases_2_X" name="Bases[2].X" class="form-control">
+                    <label for="Bases_2_Y">Y:</label>
+                    <input type="text" id="Bases_2_Y" name="Bases[0].Y" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="form-section">
+            <button type="button" id="add-base-btn" class="btn btn-primary">Додати базу</button>
+        </div><br>
+
+        <div class="row shortened">
+            <p class="highlighted-text">Характеристики БПЛА</p>
+            <hr class="spaced-hr">
+        </div>
+        <div class="form-section">
+            <div class="form-group" style="margin-top: 15px;margin-bottom: 10px;">
+                <label style="margin-bottom: 10px;" for="MaxFlightTime">Повний час польоту (хв):</label>
+                <input type="text" id="MaxFlightTime" name="MaxFlightTime" class="form-control">
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label for="ChargeTime">Час обслуговування (хв):</label>
+                <input type="text" id="ChargeTime" name="ChargeTime" class="form-control">
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label for="Speed">Швдкість польоту (км/год):</label>
+                <input type="text" id="Speed" name="Speed" class="form-control">
+            </div>
+        </div><br>
+
+        <div class="row shortened">
+            <p class="highlighted-text">Опції</p>
+            <hr class="spaced-hr">
+        </div>
+        <div class="form-section">
+            <div class="form-group">
+                <label>Досліджуваний алгоритм:</label>
+                <div class="dropdown">
+                    <select name="AlgorithmType" class="custom-select">
+                        <option value="Abc">Бджолиний</option>
+                        <option value="Tabu">Табу-пошуку</option>
+                        <option value="Greedy">Жадібний</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-section">
+            <div class="form-group">
+                <label style="margin-top: 5px;">Завантажити завдання з файлу</label>
+            </div>
+            <div class="form-group" style="margin-left: 12px;">
+                <label for="File">Обрати файл:</label>
+                <input type="file" id="File" name="File" class="form-control">
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4 mb-2 w-100">Обрахувати</button>
+    </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var pointIndex = 1;
+        var pointLabel = 2;
+        $('#add-point-btn').click(function () {
+            $('#points-container').append(`
+                                <div class="form-section" id="point${pointIndex}">
+                                <div class="form-group">
+                                    <label>Ціль ${pointLabel}</label>
+                                    <span class="remove-btn" onclick="removePoint(${pointIndex})">&times;</span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="hidden" id="Points_${pointIndex}_Id" name="Points[${pointIndex}].Id" value="${pointIndex}">
+                                    <label for="Points_${pointIndex}_X">X:</label>
+                                    <input type="text" id="Points_${pointIndex}_X" name="Points[${pointIndex}].X" class="form-control">
+                                    <label for="Points_${pointIndex}_Y">Y:</label>
+                                    <input type="text" id="Points_${pointIndex}_Y" name="Points[${pointIndex}].Y" class="form-control">
+                                    <label for="Points_${pointIndex}_Weight">Пріоритет:</label>
+                                    <input type="text" id="Points_${pointIndex}_Weight" name="Points[${pointIndex}].Weight" class="form-control">
+                                </div>
+                            </div>
+                        `);
+            pointIndex++;
+            pointLabel++;
+            updatePoints();
+        });
+    });
+
+    function removePoint(index) {
+        $('#point' + index).remove();
+        updatePoints();
+    }
+
+    function updatePoints() {
+        $('#points-container .form-section').each(function (index) {
+            var pointNumber = index + 1;
+            $(this).attr('id', 'point' + pointNumber);
+            $(this).find('label').first().text('Ціль ' + pointNumber);
+            $(this).find('.remove-btn').attr('onclick', 'removePoint(' + pointNumber + ')');
+            $(this).find('input[id^="Point"]').each(function () {
+                var id = $(this).attr('id');
+                var name = $(this).attr('name');
+                var newId = id.replace(/\d+/, pointNumber);
+                var newName = name.replace(/\d+/, pointNumber);
+                $(this).attr('id', newId);
+                $(this).attr('name', newName);
+            });
+        });
+        pointIndex = $('#points-container .form-section').length + 1;
+        pointLabel = $('#points-container .form-section').length + 2;
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        var baseIndex = 4;
+        $('#add-base-btn').click(function () {
+            $('#bases-container').append(`
+                                        <div class="form-section" id="base${baseIndex}">
+                                            <div class="form-group">
+                                                    <label>Base ${baseIndex}</label>
+                                                    <span class="remove-btn" onclick="removeBase(${baseIndex})">&times;</span>
+                                            </div>
+                                            <div class="form-group">
+                                                    <label for="Base{baseIndex}Latitude">Широта:</label>
+                                                    <input type="text" id="Base${baseIndex}Latitude" name="Base${baseIndex}Latitude" class="form-control">
+                                                    <label for="Base${baseIndex}Longitude">Довгота:</label>
+                                                    <input type="text" id="Base${baseIndex}Longitude" name="Base${baseIndex}Longitude" class="form-control">
+                                            </div>
+                                        </div>`);
+            baseIndex++;
+            updateBases();
+        });
+    });
+
+    function removeBase(index) {
+        $('#base' + index).remove();
+        updateBases();
+    }
+
+    function updateBases() {
+        $('#bases-container .form-section').each(function (index) {
+            var baseNumber = index + 1;
+            $(this).attr('id', 'base' + baseNumber);
+            $(this).find('label').first().text('База ' + baseNumber);
+            $(this).find('.remove-btn').attr('onclick', 'removeBase(' + baseNumber + ')');
+            $(this).find('input[id^="Base"]').each(function () {
+                var id = $(this).attr('id');
+                var name = $(this).attr('name');
+                var newId = id.replace(/\d+/, baseNumber);
+                var newName = name.replace(/\d+/, baseNumber);
+                $(this).attr('id', newId);
+                $(this).attr('name', newName);
+            });
+        });
+        baseIndex = $('#bases-container .form-section').length + 1;
+    }
+</script>

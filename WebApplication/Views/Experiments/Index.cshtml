@@ -1,0 +1,281 @@
+﻿@{
+    ViewData["Title"] = "Експерименти";
+}
+
+<div class="container">
+    <div class="shortened">
+        <p class="highlighted-text">Експеримент 1 (три місця дислокації ПЦО та рівнозначні об'єкти розвідки)</p>
+        <hr class="spaced-hr">
+    </div>
+    <form method="post" action="/Experiments/Experiment1" id="form1">
+        <div class="form-section">
+            <div class="form-group" style="margin-top: 15px; margin-bottom: 10px;">
+                <label>Кількість об’єктів розвідки: від</label>
+                <input type="number" name="MinIntelligenceObjectsCount" class="form-control" pattern="^[0-9]*$" min="1" required>
+                <label>до</label>
+                <input type="number" name="MaxIntelligenceObjectsCount" class="form-control" pattern="^[0-9]*$" min="1" required>
+                <label>з кроком</label>
+                <input type="number" name="IntelligenceObjectsCountStep" class="form-control" pattern="^[0-9]*$" min="1" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label>Кількість задач:</label>
+                <input type="number" name="ProblemsCount" class="form-control" pattern="^[0-9]*$" min="1" required>
+                <label>Кількість прогонів:</label>
+                <input type="number" name="ProblemRunsCount" class="form-control" pattern="^[0-9]*$" min="1" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2 mb-5 w-100">Запустити експеримент 1</button>
+    </form>
+    <div class="shortened">
+        <p class="highlighted-text">Експеримент 2 (три місця дислокації ПЦО та нерівнозначні об'єкти розвідки)</p>
+        <hr class="spaced-hr">
+    </div>
+    <form method="post" action="/Experiments/Experiment2" id="form2">
+        <div class="form-section">
+            <div class="form-group" style="margin-top: 15px; margin-bottom: 10px;">
+                <label>Кількість об’єктів розвідки: від</label>
+                <input type="number" name="MinIntelligenceObjectsCount" class="form-control" pattern="^[0-9]*$" min="1" required>
+                <label>до</label>
+                <input type="number" name="MaxIntelligenceObjectsCount" class="form-control" pattern="^[0-9]*$" min="1" required>
+                <label>з кроком</label>
+                <input type="number" name="IntelligenceObjectsCountStep" class="form-control" pattern="^[0-9]*$" min="1" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label>Кількість задач:</label>
+                <input type="number" name="ProblemsCount" class="form-control" pattern="^[0-9]*$" min="1" required>
+                <label>Кількість прогонів:</label>
+                <input type="number" name="ProblemRunsCount" class="form-control" pattern="^[0-9]*$" min="1" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2 mb-5 w-100">Запустити експеримент 2</button>
+    </form>
+    <div class="shortened">
+        <p class="highlighted-text">Експеримент 3 (множина місць дислокації ПЦО та нерівнозначні об'єкти розвідки)</p>
+        <hr class="spaced-hr">
+    </div>
+    <form method="post" action="/Experiments/Experiment3" id="form3">
+        <div class="form-section">
+            <div class="form-group" style="margin-top: 15px; margin-bottom: 20px;">
+                <label>Кількість місць дислокації ПЦО: від</label>
+                <input type="number" name="MinBasesCount" class="form-control" pattern="^[0-9]*$" min="4" required>
+                <label>до</label>
+                <input type="number" name="MaxBasesCount" class="form-control" pattern="^[0-9]*$" min="4" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label>Кількість об’єктів розвідки: від</label>
+                <input type="number" name="MinIntelligenceObjectsCount" class="form-control" pattern="^[0-9]*$" min="1" required>
+                <label>до</label>
+                <input type="number" name="MaxIntelligenceObjectsCount" class="form-control" pattern="^[0-9]*$" min="1" required>
+                <label>з кроком</label>
+                <input type="number" name="IntelligenceObjectsCountStep" class="form-control" pattern="^[0-9]*$" min="1" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label>Кількість задач:</label>
+                <input type="number" name="ProblemsCount" class="form-control" pattern="^[0-9]*$" min="1" required>
+                <label>Кількість прогонів:</label>
+                <input type="number" name="ProblemRunsCount" class="form-control" pattern="^[0-9]*$" min="1" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2 mb-5 w-100">Запустити експеримент 3</button>
+    </form>
+    <div class="shortened">
+        <p class="highlighted-text">Експеримент 4 (параметри бджолиного алгоритму)</p>
+        <hr class="spaced-hr">
+    </div>
+    <form method="post" action="/Experiments/Experiment4" id="form4">
+        <div class="form-section">
+            <div class="form-group" style="margin-top: 15px; margin-bottom: 10px;">
+                <label>Досліджуваний алгоритм:</label>
+                <div class="dropdown">
+                    <select name="AlgorithmOption" class="custom-select">
+                        <option value="2">Abc-R-An</option>
+                        <option value="3">Abc-P-An</option>
+                        <option value="4">Abc-Pn-An</option>
+                        <option value="5">Abc-R-Rp</option>
+                        <option value="6">Abc-P-Rp</option>
+                        <option value="7">Abc-Pn-Rp</option>
+                        <option value="8">Abc-R-Rpn</option>
+                        <option value="9">Abc-P-Rpn</option>
+                        <option value="10">Abc-Pn-Rpn</option>
+                        <option value="11">Abc-R-Rpaan</option>
+                        <option value="12">Abc-P-Rpaan</option>
+                        <option value="13">Abc-Pn-Rpaan</option>
+                        <option value="14">Abc-R-Rpnaan</option>
+                        <option value="15">Abc-P-Rpnaan</option>
+                        <option value="16">Abc-Pn-Rpnaan</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: 15px; margin-bottom: 20px;">
+                <label>Коєфіцієнт кількості ітерацій без покращення: від</label>
+                <input type="number" name="MinIterationCountCoefficient" class="form-control" pattern="^[0-9]*$" min="0.25" step="0.05" required>
+                <label>до</label>
+                <input type="number" name="MaxIterationCountCoefficient" class="form-control" pattern="^[0-9]*$" min="0.25" step="0.05" required>
+                <label>з кроком</label>
+                <input type="number" name="IterationCountCoefficientStep" class="form-control" pattern="^[0-9]*$" min="0.25" step="0.05" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label>Коєфіцієнт кількості бджіл-розвідників: від</label>
+                <input type="number" name="MinScoutsCountCoefficient" class="form-control" pattern="^[0-9]*$" min="0.25" step="0.05" required>
+                <label>до</label>
+                <input type="number" name="MaxScoutsCountCoefficient" class="form-control" pattern="^[0-9]*$" min="0.25" step="0.05" required>
+                <label>з кроком</label>
+                <input type="number" name="ScoutsCountCoefficientStep" class="form-control" pattern="^[0-9]*$" min="0.25" step="0.05" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label>Коєфіцієнт кількості бджіл-фуражирів: від</label>
+                <input type="number" name="MinForagersCountCoefficient" class="form-control" pattern="^[0-9]*$" min="0.25" step="0.05" required>
+                <label>до</label>
+                <input type="number" name="MaxForagersCountCoefficient" class="form-control" pattern="^[0-9]*$" min="0.25" step="0.05" required>
+                <label>з кроком</label>
+                <input type="number" name="ForagersCountCoefficientStep" class="form-control" pattern="^[0-9]*$" min="0.25" step="0.05" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2 mb-5 w-100">Запустити експеримент 4</button>
+    </form>
+    <div class="shortened">
+        <p class="highlighted-text">Експеримент 5 (параметри алгоритму табу-пошуку)</p>
+        <hr class="spaced-hr">
+    </div>
+    <form method="post" action="/Experiments/Experiment5" id="form5">
+        <div class="form-section">
+            <div class="form-group" style="margin-top: 15px; margin-bottom: 10px;">
+                <label>Досліджуваний алгоритм:</label>
+                <div class="dropdown">
+                    <select name="AlgorithmOption" class="custom-select">
+                        <option value="17">Tabu-Rp</option>
+                        <option value="18">Tabu-Rpn</option>
+                        <option value="19">Tabu-Rpaan</option>
+                        <option value="20">Tabu-Rpnaan</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: 15px; margin-bottom: 20px;">
+                <label>Коєфіцієнт кількості ітерацій без покращення: від</label>
+                <input type="number" name="MinIterationCountCoefficient" class="form-control" pattern="^[0-9]*$" min="0.25" step="0.05" required>
+                <label>до</label>
+                <input type="number" name="MaxIterationCountCoefficient" class="form-control" pattern="^[0-9]*$" min="0.25" step="0.05" required>
+                <label>з кроком</label>
+                <input type="number" name="IterationCountCoefficientStep" class="form-control" pattern="^[0-9]*$" min="0.25" step="0.05" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label>Коєфіцієнт розміру табу-списку: від</label>
+                <input type="number" name="MinTabuListSizeCoefficient" class="form-control" pattern="^[0-9]*$" min="0.25" step="0.05" required>
+                <label>до</label>
+                <input type="number" name="MaxTabuListSizeCountCoefficient" class="form-control" pattern="^[0-9]*$" min="0.25" step="0.05" required>
+                <label>з кроком</label>
+                <input type="number" name="TabuListSizeCountCoefficientStep" class="form-control" pattern="^[0-9]*$" min="0.25" step="0.05" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2 mb-5 w-100">Запустити експеримент 5</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+
+<script>
+    $(function () {
+        $('#form1').submit(function (e) {
+            // Prevent default form submission
+            e.preventDefault();
+            // Show toast with multiline text and longer display time
+            toastr.success(
+                'Експеримент 1 запущено<br>Чекайте завантаження результатаів',
+                'Форму заповнено успішно',
+                {
+                    timeOut: 10000,
+                    extendedTimeOut: 2000,
+                    closeButton: true,
+                    progressBar: true
+                }
+            );
+            // Delay to ensure the toast is shown before form submission
+            setTimeout(function () {
+                // Continue with form submission
+                $('#form1')[0].submit();
+            }, 1000);
+        });
+    });
+</script>
+<script>
+    $(function () {
+        $('#form2').submit(function (e) {
+            e.preventDefault();
+            toastr.success(
+                'Експеримент 2 запущено<br>Чекайте завантаження результатаів',
+                'Форму заповнено успішно',
+                {
+                    timeOut: 10000, 
+                    extendedTimeOut: 2000, 
+                    closeButton: true,
+                    progressBar: true
+                }
+            );
+            setTimeout(function () {
+                $('#form2')[0].submit();
+            }, 1000);
+        });
+    });
+</script>
+<script>
+    $(function () {
+        $('#form3').submit(function (e) {
+            e.preventDefault();
+            toastr.success(
+                'Експеримент 3 запущено<br>Чекайте завантаження результатаів',
+                'Форму заповнено успішно',
+                {
+                    timeOut: 10000,
+                    extendedTimeOut: 2000,
+                    closeButton: true,
+                    progressBar: true
+                }
+            );
+            setTimeout(function () {
+                $('#form3')[0].submit();
+            }, 1000);
+        });
+    });
+</script>
+<script>
+    $(function () {
+        $('#form4').submit(function (e) {
+            e.preventDefault();
+            toastr.success(
+                'Експеримент 4 запущено<br>Чекайте завантаження результатаів',
+                'Форму заповнено успішно',
+                {
+                    timeOut: 10000,
+                    extendedTimeOut: 2000,
+                    closeButton: true,
+                    progressBar: true
+                }
+            );
+            setTimeout(function () {
+                $('#form4')[0].submit();
+            }, 1000);
+        });
+    });
+</script>
+<script>
+    $(function () {
+        $('#form5').submit(function (e) {
+            e.preventDefault();
+            toastr.success(
+                'Експеримент 5 запущено<br>Чекайте завантаження результатаів',
+                'Форму заповнено успішно',
+                {
+                    timeOut: 10000,
+                    extendedTimeOut: 2000,
+                    closeButton: true,
+                    progressBar: true
+                }
+            );
+            setTimeout(function () {
+                $('#form5')[0].submit();
+            }, 1000);
+        });
+    });
+</script>
