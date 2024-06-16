@@ -1,7 +1,7 @@
 ﻿using PathPlanning.Entities;
 using PathPlanning.Exceptions;
 
-namespace WebApplication.Models;
+namespace WebApplication.Tools;
 
 public static class FileInputTool
 {

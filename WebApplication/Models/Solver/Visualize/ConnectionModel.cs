@@ -1,6 +1,6 @@
-﻿namespace WebApplication.Models
+﻿namespace WebApplication.Models.Solver.Visualize
 {
-    public class Connection
+    public class ConnectionModel
     {
         public string StartType { get; set; }
 

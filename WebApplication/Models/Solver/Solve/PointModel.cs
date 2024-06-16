@@ -1,6 +1,5 @@
-﻿namespace WebApplication.Models.Solver
+﻿namespace WebApplication.Models.Solver.Solve
 {
-
     public class PointModel
     {
         public int Id { get; set; }

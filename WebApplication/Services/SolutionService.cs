@@ -1,6 +1,6 @@
-﻿using WebApplication.Models.Solver;
+﻿using WebApplication.Models.Solver.Solve;
 
-namespace WebApplication
+namespace WebApplication.Services
 {
     public class SolutionService
     {

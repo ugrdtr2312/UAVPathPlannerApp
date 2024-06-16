@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Diagnostics.Metrics;
-using Microsoft.VisualBasic;
 using PathPlanning.Entities;
 using PathPlanning.Solvers;
 using PathPlanning.Solvers.Interfaces;
 using PathPlanning.Solvers.Options;
-using System.Reflection;
 using System.Text;
 using System.Text.Json;
-using WebApplication.Models;
-using WebApplication.Models.Solver;
+using WebApplication.Models.Solver.Solve;
+using WebApplication.Models.Solver.Visualize;
+using WebApplication.Services;
+using WebApplication.Tools;
 
 namespace WebApplication.Controllers
 {
@@ -27,20 +26,13 @@ namespace WebApplication.Controllers
             return View();
         }
 
-        public IActionResult Solve(ProblemData data)
+        public IActionResult Solve(ProblemModel data)
         {
-            Problem problem = null;
+            var problem = data.File != null && data.File.Length != 0
+                ? FileInputTool.ReadProblem(data.File)
+                : MapToProblem(data);
 
-            if (data.File != null && data.File.Length != 0)
-            {
-                problem = FileInputTool.ReadProblem(data.File);
-            }
-            else
-            {
-               // problem = new Problem();
-            }
-
-            problem!.Init();
+            problem.Init();
 
             ISolver solver = data.AlgorithmType switch
             {
@@ -51,7 +43,7 @@ namespace WebApplication.Controllers
                     LocalOptimizationOptions.RebuildProbableNeighborhoodAndAddNearest),
                 "Tabu" => new TabuSolver(
                     problem, 
-                    LocalOptimizationOptions.RebuildProbableAndAddNearest),
+                    LocalOptimizationOptions.RebuildProbableNeighborhoodAndAddNearest, 4, 2),
                 _ => throw new Exception("Некоретно обрано алгоритм")
             };
 
@@ -63,85 +55,9 @@ namespace WebApplication.Controllers
                 Solution = solution
             };
 
-            // Prepare base and object data
-            var connections = new List<Connection>();
-
-            var baseMarkers = problem.Bases.Select(x => new MapMarker { Longitude = x.X, Latitude = x.Y, Label = x.Id.ToString() }).ToList();
-
-            var objectMarkers = problem.IntelligenceObjects.Select(x => new MapMarker { Longitude = x.X, Latitude = x.Y, Label = x.Id.ToString() }).ToList();
-
-            // Prepare the connections data
-
-
-            var colors = new[]
-            {
-                "#FF0000", // Red
-                "#800080", // Purple
-                "#00FF00", // Green
-                "#0000FF", // Blue
-                "#FFFF00", // Yellow
-                "#FF00FF", // Magenta
-                "#00FFFF", // Cyan
-                "#FFA500", // Orange
-                "#FFC0CB", // Pink
-                "#00FF7F"  // Spring Green
-            };
-
-            var counter = 0;
-
-            foreach (var subPath in solution.SubPaths)
-            {
-                if (subPath.IntelligenceObjects.Any())
-                {
-                    connections.Add(new Connection
-                    {
-                        StartType = "Base",
-                        StartIndex = subPath.StartBase.Id - 1,
-                        EndType = "Object",
-                        EndIndex = subPath.IntelligenceObjects[0].Id - 1,
-                        Color = colors[counter]
-                    });
-
-                    if (subPath.IntelligenceObjects.Count > 1)
-                    {
-                        for (var i = 0; i < subPath.IntelligenceObjects.Count - 1; i++)
-                        {
-                            connections.Add(new Connection
-                            {
-                                StartType = "Object",
-                                StartIndex = subPath.IntelligenceObjects[i].Id - 1,
-                                EndType = "Object",
-                                EndIndex = subPath.IntelligenceObjects[i + 1].Id - 1,
-                                Color = colors[counter]
-                            });
-                        }
-                    }
-
-                    connections.Add(new Connection
-                    {
-                        StartType = "Object",
-                        StartIndex = subPath.IntelligenceObjects[^1].Id - 1,
-                        EndType = "Base",
-                        EndIndex = subPath.EndBase.Id - 1,
-                        Color = colors[counter]
-                    });
-                }
-                else
-                {
-                    connections.Add(new Connection
-                    {
-                        StartType = "Base",
-                        StartIndex = subPath.StartBase.Id - 1,
-                        EndType = "Base",
-                        EndIndex = subPath.EndBase.Id - 1,
-                        Color = colors[counter]
-                    });
-                }
-
-                counter++;
-            }
-
-
+            var connections = GetConnections(solution);
+            var baseMarkers = problem.Bases.Select(x => new MarkerModel { Longitude = x.X, Latitude = x.Y, Label = x.Id.ToString() }).ToList();
+            var objectMarkers = problem.IntelligenceObjects.Select(x => new MarkerModel { Longitude = x.X, Latitude = x.Y, Label = x.Id.ToString() }).ToList();
 
             ViewData["BaseMarkers"] = JsonSerializer.Serialize(baseMarkers);
             ViewData["ObjectMarkers"] = JsonSerializer.Serialize(objectMarkers);
@@ -156,6 +72,94 @@ namespace WebApplication.Controllers
             var subPathsAsString = _solutionService.Solution.Solution.SubPathsToString();
 
             return File(Encoding.UTF8.GetBytes(subPathsAsString), "text/plain", "result.txt");
+        }
+
+        private Problem MapToProblem(ProblemModel data)
+        {
+            var bases = data.Bases.Select(x => new Base(x.Id, x.X, x.Y)).ToList();
+            var intelligenceObjects = data.Points.Select(x => new IntelligenceObject(x.Id, x.X, x.Y, x.Weight)).ToList();
+
+            return new Problem(
+                bases,
+                intelligenceObjects,
+                data.MaxFlightTime / 60,
+                data.Speed,
+                data.ChargeTime / 60,
+                true);
+        }
+
+        private List<ConnectionModel> GetConnections(Solution solution)
+        {
+            var colors = new[]
+            {
+                "#FF0000", // Red
+                "#800080", // Purple
+                "#00FF00", // Green
+                "#0000FF", // Blue
+                "#FFFF00", // Yellow
+                "#FF00FF", // Magenta
+                "#00FFFF", // Cyan
+                "#FFA500", // Orange
+                "#FFC0CB", // Pink
+                "#00FF7F"  // Spring Green
+            };
+            var connections = new List<ConnectionModel>();
+
+            var counter = 0;
+
+            foreach (var subPath in solution.SubPaths)
+            {
+                if (subPath.IntelligenceObjects.Any())
+                {
+                    connections.Add(new ConnectionModel
+                    {
+                        StartType = "Base",
+                        StartIndex = subPath.StartBase.Id - 1,
+                        EndType = "Object",
+                        EndIndex = subPath.IntelligenceObjects[0].Id - 1,
+                        Color = colors[counter]
+                    });
+
+                    if (subPath.IntelligenceObjects.Count > 1)
+                    {
+                        for (var i = 0; i < subPath.IntelligenceObjects.Count - 1; i++)
+                        {
+                            connections.Add(new ConnectionModel
+                            {
+                                StartType = "Object",
+                                StartIndex = subPath.IntelligenceObjects[i].Id - 1,
+                                EndType = "Object",
+                                EndIndex = subPath.IntelligenceObjects[i + 1].Id - 1,
+                                Color = colors[counter]
+                            });
+                        }
+                    }
+
+                    connections.Add(new ConnectionModel
+                    {
+                        StartType = "Object",
+                        StartIndex = subPath.IntelligenceObjects[^1].Id - 1,
+                        EndType = "Base",
+                        EndIndex = subPath.EndBase.Id - 1,
+                        Color = colors[counter]
+                    });
+                }
+                else
+                {
+                    connections.Add(new ConnectionModel
+                    {
+                        StartType = "Base",
+                        StartIndex = subPath.StartBase.Id - 1,
+                        EndType = "Base",
+                        EndIndex = subPath.EndBase.Id - 1,
+                        Color = colors[counter]
+                    });
+                }
+
+                counter++;
+            }
+
+            return connections;
         }
     }
 }
