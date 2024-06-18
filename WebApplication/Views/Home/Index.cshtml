@@ -16,7 +16,7 @@
             <hr class="spaced-hr">
         </div>
         <div id="points-container">
-            <div class="form-section">
+            <div class="form-section" id="point0">
                 <div class="form-group">
                     <label style="margin-top: 15px;">Ціль 1</label>
                 </div>
@@ -36,11 +36,11 @@
         </div><br>
 
         <div class="row shortened">
-            <p class="highlighted-text">Місця дислокації ПЦО </p>
+            <p class="highlighted-text">Місця дислокації ПЦО</p>
             <hr class="spaced-hr">
         </div>
         <div id="bases-container">
-            <div class="form-section">
+            <div class="form-section" id="base0">
                 <div class="form-group">
                     <label style="margin-top: 15px;">База 1</label>
                 </div>
@@ -52,7 +52,7 @@
                     <input type="text" id="Bases_0_Y" name="Bases[0].Y" class="form-control">
                 </div>
             </div>
-            <div class="form-section">
+            <div class="form-section" id="base1">
                 <div class="form-group">
                     <label>База 2</label>
                 </div>
@@ -64,16 +64,16 @@
                     <input type="text" id="Bases_1_Y" name="Bases[1].Y" class="form-control">
                 </div>
             </div>
-            <div class="form-section">
+            <div class="form-section" id="base2">
                 <div class="form-group">
                     <label>База 3</label>
                 </div>
                 <div class="form-group">
-                    <input type="hidden" id="Bases_2_Id" name="Bases[2].Id" value="1">
+                    <input type="hidden" id="Bases_2_Id" name="Bases[2].Id" value="3">
                     <label for="Bases_2_X">X:</label>
                     <input type="text" id="Bases_2_X" name="Bases[2].X" class="form-control">
                     <label for="Bases_2_Y">Y:</label>
-                    <input type="text" id="Bases_2_Y" name="Bases[0].Y" class="form-control">
+                    <input type="text" id="Bases_2_Y" name="Bases[2].Y" class="form-control">
                 </div>
             </div>
         </div>
@@ -137,25 +137,46 @@
         var pointLabel = 2;
         $('#add-point-btn').click(function () {
             $('#points-container').append(`
-                                <div class="form-section" id="point${pointIndex}">
-                                <div class="form-group">
-                                    <label>Ціль ${pointLabel}</label>
-                                    <span class="remove-btn" onclick="removePoint(${pointIndex})">&times;</span>
-                                </div>
-                                <div class="form-group">
-                                    <input type="hidden" id="Points_${pointIndex}_Id" name="Points[${pointIndex}].Id" value="${pointIndex}">
-                                    <label for="Points_${pointIndex}_X">X:</label>
-                                    <input type="text" id="Points_${pointIndex}_X" name="Points[${pointIndex}].X" class="form-control">
-                                    <label for="Points_${pointIndex}_Y">Y:</label>
-                                    <input type="text" id="Points_${pointIndex}_Y" name="Points[${pointIndex}].Y" class="form-control">
-                                    <label for="Points_${pointIndex}_Weight">Пріоритет:</label>
-                                    <input type="text" id="Points_${pointIndex}_Weight" name="Points[${pointIndex}].Weight" class="form-control">
-                                </div>
-                            </div>
-                        `);
+                    <div class="form-section" id="point${pointIndex}">
+                        <div class="form-group">
+                            <label>Ціль ${pointLabel}</label>
+                            <span class="remove-btn" onclick="removePoint(${pointIndex})">&times;</span>
+                        </div>
+                        <div class="form-group">
+                            <input type="hidden" id="Points_${pointIndex}_Id" name="Points[${pointIndex}].Id" value="${pointIndex + 1}">
+                            <label for="Points_${pointIndex}_X">X:</label>
+                            <input type="text" id="Points_${pointIndex}_X" name="Points[${pointIndex}].X" class="form-control">
+                            <label for="Points_${pointIndex}_Y">Y:</label>
+                            <input type="text" id="Points_${pointIndex}_Y" name="Points[${pointIndex}].Y" class="form-control">
+                            <label for="Points_${pointIndex}_Weight">Пріоритет:</label>
+                            <input type="text" id="Points_${pointIndex}_Weight" name="Points[${pointIndex}].Weight" class="form-control">
+                        </div>
+                    </div>
+                `);
             pointIndex++;
             pointLabel++;
             updatePoints();
+        });
+
+        var baseIndex = 3;
+        $('#add-base-btn').click(function () {
+            $('#bases-container').append(`
+                    <div class="form-section" id="base${baseIndex}">
+                        <div class="form-group">
+                            <label>База ${baseIndex + 1}</label>
+                            <span class="remove-btn" onclick="removeBase(${baseIndex})">&times;</span>
+                        </div>
+                        <div class="form-group">
+                            <input type="hidden" id="Bases_${baseIndex}_Id" name="Bases[${baseIndex}].Id" value="${baseIndex + 1}">
+                            <label for="Bases_${baseIndex}_X">X:</label>
+                            <input type="text" id="Bases_${baseIndex}_X" name="Bases[${baseIndex}].X" class="form-control">
+                            <label for="Bases_${baseIndex}_Y">Y:</label>
+                            <input type="text" id="Bases_${baseIndex}_Y" name="Bases[${baseIndex}].Y" class="form-control">
+                        </div>
+                    </div>
+                `);
+            baseIndex++;
+            updateBases();
         });
     });
 
@@ -166,11 +187,11 @@
 
     function updatePoints() {
         $('#points-container .form-section').each(function (index) {
-            var pointNumber = index + 1;
+            var pointNumber = index;
             $(this).attr('id', 'point' + pointNumber);
-            $(this).find('label').first().text('Ціль ' + pointNumber);
+            $(this).find('label').first().text('Ціль ' + (pointNumber + 1));
             $(this).find('.remove-btn').attr('onclick', 'removePoint(' + pointNumber + ')');
-            $(this).find('input[id^="Point"]').each(function () {
+            $(this).find('input[id^="Points_"]').each(function () {
                 var id = $(this).attr('id');
                 var name = $(this).attr('name');
                 var newId = id.replace(/\d+/, pointNumber);
@@ -179,32 +200,9 @@
                 $(this).attr('name', newName);
             });
         });
-        pointIndex = $('#points-container .form-section').length + 1;
-        pointLabel = $('#points-container .form-section').length + 2;
+        pointIndex = $('#points-container .form-section').length;
+        pointLabel = pointIndex + 1;
     }
-</script>
-
-<script>
-    $(document).ready(function () {
-        var baseIndex = 4;
-        $('#add-base-btn').click(function () {
-            $('#bases-container').append(`
-                                        <div class="form-section" id="base${baseIndex}">
-                                            <div class="form-group">
-                                                    <label>Base ${baseIndex}</label>
-                                                    <span class="remove-btn" onclick="removeBase(${baseIndex})">&times;</span>
-                                            </div>
-                                            <div class="form-group">
-                                                    <label for="Base{baseIndex}Latitude">Широта:</label>
-                                                    <input type="text" id="Base${baseIndex}Latitude" name="Base${baseIndex}Latitude" class="form-control">
-                                                    <label for="Base${baseIndex}Longitude">Довгота:</label>
-                                                    <input type="text" id="Base${baseIndex}Longitude" name="Base${baseIndex}Longitude" class="form-control">
-                                            </div>
-                                        </div>`);
-            baseIndex++;
-            updateBases();
-        });
-    });
 
     function removeBase(index) {
         $('#base' + index).remove();
@@ -213,11 +211,11 @@
 
     function updateBases() {
         $('#bases-container .form-section').each(function (index) {
-            var baseNumber = index + 1;
+            var baseNumber = index;
             $(this).attr('id', 'base' + baseNumber);
-            $(this).find('label').first().text('База ' + baseNumber);
+            $(this).find('label').first().text('База ' + (baseNumber + 1));
             $(this).find('.remove-btn').attr('onclick', 'removeBase(' + baseNumber + ')');
-            $(this).find('input[id^="Base"]').each(function () {
+            $(this).find('input[id^="Bases_"]').each(function () {
                 var id = $(this).attr('id');
                 var name = $(this).attr('name');
                 var newId = id.replace(/\d+/, baseNumber);
@@ -226,6 +224,6 @@
                 $(this).attr('name', newName);
             });
         });
-        baseIndex = $('#bases-container .form-section').length + 1;
+        baseIndex = $('#bases-container .form-section').length;
     }
 </script>

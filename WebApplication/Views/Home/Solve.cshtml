@@ -147,15 +147,6 @@
 
             // Adjust the map's viewport to fit the bounds of the markers
             map.fitBounds(bounds);
-
-            // Add listener for bounds_changed event
-            google.maps.event.addListenerOnce(map, 'bounds_changed', function () {
-                if (map.getZoom() > 15) {
-                    map.setZoom(15); // Adjust this zoom level as desired
-                } else {
-                    map.setZoom(map.getZoom() - 1); // Zoom out a little
-                }
-            });
         };
     </script>
 </body>

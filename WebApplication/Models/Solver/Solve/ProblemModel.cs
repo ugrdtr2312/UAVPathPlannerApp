@@ -10,7 +10,7 @@
 
         public int ChargeTime { get; set; }
 
-        public int Speed { get; set; }
+        public double Speed { get; set; }
 
         public string AlgorithmType { get; set; }
 

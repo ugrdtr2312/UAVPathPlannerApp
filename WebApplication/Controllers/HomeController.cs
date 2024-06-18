@@ -76,15 +76,25 @@ namespace WebApplication.Controllers
 
         private Problem MapToProblem(ProblemModel data)
         {
+            for (var i = 0; i < data.Bases.Count; i++)
+            {
+                data.Bases[i].Id = i + 1;
+            }
+
+            for (var i = 0; i < data.Points.Count; i++)
+            {
+                data.Points[i].Id = i + 1;
+            }
+
             var bases = data.Bases.Select(x => new Base(x.Id, x.X, x.Y)).ToList();
             var intelligenceObjects = data.Points.Select(x => new IntelligenceObject(x.Id, x.X, x.Y, x.Weight)).ToList();
 
             return new Problem(
                 bases,
                 intelligenceObjects,
-                data.MaxFlightTime / 60,
+                data.MaxFlightTime / 60d,
                 data.Speed,
-                data.ChargeTime / 60,
+                data.ChargeTime / 60d,
                 true);
         }
 
